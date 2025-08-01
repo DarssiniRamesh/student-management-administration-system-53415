@@ -46,7 +46,21 @@ function OperatorsPage() {
       const resp = await fetch(url, {
         headers: { "Authorization": `Bearer ${userToken}` }
       });
-      if (!resp.ok) throw new Error(`Failed to fetch: ${resp.statusText}`);
+      if (resp.status === 401) {
+        setFetchError("Session expired. Please log in again.");
+        setOperators([]);
+        return;
+      }
+      if (!resp.ok) {
+        let errMsg;
+        try {
+          const data = await resp.json();
+          errMsg = data.detail || data.message || resp.statusText;
+        } catch {
+          errMsg = resp.statusText;
+        }
+        throw new Error(`Failed to fetch: ${errMsg}`);
+      }
       const data = await resp.json();
       setOperators(data);
     } catch (err) {
@@ -91,7 +105,6 @@ function OperatorsPage() {
       if (editingOperator) {
         // EDIT: Only allow full_name/password update. Email/role NOT updatable for operator.
         const body = { full_name: full_name, password: password || null };
-        // Both fields required by backend, but either can be null. If empty password, backend should ignore updating password.
         const resp = await fetch(`${API_BASE}/auth/me`, {
           method: "PUT",
           headers: {
@@ -100,8 +113,14 @@ function OperatorsPage() {
           },
           body: JSON.stringify(body)
         });
+        if (resp.status === 401) {
+          setFormError("Session expired. Please log in again.");
+          setFormPending(false);
+          return;
+        }
         if (!resp.ok) {
-          const errdata = await resp.json();
+          let errdata;
+          try { errdata = await resp.json(); } catch { errdata = {}; }
           throw new Error(errdata.detail || "Failed to update operator");
         }
         setFormSuccess("Operator updated successfully");
@@ -117,8 +136,14 @@ function OperatorsPage() {
           headers: { "Authorization": `Bearer ${userToken}`, "Content-Type": "application/json" },
           body: JSON.stringify({ email, full_name, role, password })
         });
+        if (resp.status === 401) {
+          setFormError("Session expired. Please log in again.");
+          setFormPending(false);
+          return;
+        }
         if (!resp.ok) {
-          const errdata = await resp.json();
+          let errdata;
+          try { errdata = await resp.json(); } catch { errdata = {}; }
           throw new Error(errdata.detail || "Failed to add operator");
         }
         setFormSuccess("Operator added successfully");
@@ -144,8 +169,14 @@ function OperatorsPage() {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${userToken}` }
       });
+      if (resp.status === 401) {
+        alert("Session expired. Please log in again.");
+        setDeletePending(false);
+        return;
+      }
       if (!resp.ok) {
-        const errdata = await resp.json();
+        let errdata;
+        try { errdata = await resp.json(); } catch { errdata = {}; }
         throw new Error(errdata.detail || "Failed to delete operator");
       }
       fetchOperators();

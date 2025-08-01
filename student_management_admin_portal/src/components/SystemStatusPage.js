@@ -77,8 +77,8 @@ function SystemStatusPage() {
         <div style={{ marginTop: 28, fontSize: 18 }}>Loading system status...</div>
       ) : error ? (
         <div style={{
-          marginTop: 32, color: "#e53935", fontWeight: 600, fontSize: 17,
-          background: "#fff4f4", borderRadius: 8, padding: "18px 28px"
+          marginTop: 32, color: "#fff", fontWeight: 700, fontSize: 17,
+          background: "#ff9800", borderRadius: 8, padding: "18px 28px"
         }}>
           {error}
         </div>

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navig
 import './App.css';
 import Layout from './components/Layout';
 import Login from './components/Login';
-import { login, logout, getToken, getUser, isAuthenticated } from './components/auth';
+import { login, logout, getToken, getUser, isAuthenticated, isTokenExpired, addSessionListeners, getTokenExpiry } from './components/auth';
 
 import OperatorsPage from "./components/OperatorsPage";
 import SystemParamsPage from "./components/SystemParamsPage";
@@ -28,10 +28,39 @@ function App() {
   const [authToken, setAuthToken] = useState(getToken());
   const [authUser, setAuthUser] = useState(getUser());
   const [loginError, setLoginError] = useState(null);
+  const [expiryNotice, setExpiryNotice] = useState(null);
 
+  // Apply theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  // Auto-logout on token expiry (interval timer)
+  useEffect(() => {
+    let intervalId = null;
+    function checkExpiry() {
+      const tok = getToken();
+      if (tok && isTokenExpired(tok)) {
+        setExpiryNotice("Session expired. Please log in again.");
+        handleLogout();
+      }
+    }
+    // Check expiry every 10 seconds
+    if (authToken) {
+      intervalId = setInterval(checkExpiry, 10000);
+    }
+    return () => { if (intervalId) clearInterval(intervalId); };
+    // eslint-disable-next-line
+  }, [authToken]);
+
+  // Storage event to sync sessions (logout in all tabs)
+  useEffect(() => {
+    addSessionListeners(() => {
+      setAuthToken(null);
+      setAuthUser(null);
+      setExpiryNotice("You were logged out in another tab. Please log in again.");
+    });
+  }, []);
 
   // PUBLIC_INTERFACE
   const toggleTheme = () => {
@@ -46,10 +75,12 @@ function App() {
       setAuthToken(token);
       setAuthUser(user);
       setLoginError(null);
+      setExpiryNotice(null);
     } else {
       setLoginError(errMsg || "Login failed");
       setAuthToken(null);
       setAuthUser(null);
+      setExpiryNotice(null);
       logout();
     }
   };
@@ -113,6 +144,17 @@ function App() {
             marginLeft: 14
           }}>
             {authUser?.email}
+            {/* Session expiry display */}
+            <span style={{
+              marginLeft: 14,
+              color: "#888",
+              fontSize: 13,
+              fontWeight: 400
+            }}>
+              {authToken && getTokenExpiry(authToken)
+                ? `Expires in ${Math.max(0, Math.floor(getTokenExpiry(authToken) - Date.now() / 1000))}s`
+                : null}
+            </span>
           </span>
         )}
       </div>
@@ -120,31 +162,50 @@ function App() {
 
     // Auth routes: /login is public, everything else protected
     return (
-      <Routes>
-        <Route path="/login"
-          element={
-            isAuthenticated()
-              ? <Navigate to="/operators" replace />
-              : <Login onLogin={handleLogin} error={loginError} />
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <RequireAuth>
-              <Layout activePath={location.pathname} onNavigate={handleNavigate}>
-                {renderTopbar()}
-                <Routes>
-                  <Route path="/operators" element={<OperatorsPage />} />
-                  <Route path="/system-params" element={<SystemParamsPage />} />
-                  <Route path="/status" element={<SystemStatusPage />} />
-                  <Route path="*" element={<OperatorsPage />} /> {/* Default route */}
-                </Routes>
-              </Layout>
-            </RequireAuth>
-          }
-        />
-      </Routes>
+      <>
+        {/* Expiry or session alert */}
+        {expiryNotice && (
+          <div style={{
+            background: "#fffbe8",
+            border: "1.5px solid #ff9800",
+            color: "#6d4800",
+            fontWeight: 600,
+            fontSize: 15,
+            padding: "12px 25px",
+            borderRadius: 7,
+            textAlign: "center",
+            maxWidth: 440,
+            margin: "24px auto 8px auto"
+          }}>
+            {expiryNotice}
+          </div>
+        )}
+        <Routes>
+          <Route path="/login"
+            element={
+              isAuthenticated()
+                ? <Navigate to="/operators" replace />
+                : <Login onLogin={handleLogin} error={loginError} />
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <RequireAuth>
+                <Layout activePath={location.pathname} onNavigate={handleNavigate}>
+                  {renderTopbar()}
+                  <Routes>
+                    <Route path="/operators" element={<OperatorsPage />} />
+                    <Route path="/system-params" element={<SystemParamsPage />} />
+                    <Route path="/status" element={<SystemStatusPage />} />
+                    <Route path="*" element={<OperatorsPage />} /> {/* Default route */}
+                  </Routes>
+                </Layout>
+              </RequireAuth>
+            }
+          />
+        </Routes>
+      </>
     );
   }
 

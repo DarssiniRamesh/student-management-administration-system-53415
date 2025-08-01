@@ -42,6 +42,13 @@ function SystemParamsPage() {
               ? { Authorization: `Bearer ${token}` }
               : undefined,
           });
+          if (resp.status === 401) {
+            if (!didCancel) {
+              setLoadError("Session expired. Please log in again.");
+              setLoading(false);
+            }
+            return;
+          }
           if (resp.ok) {
             const data = await resp.json();
             // Heuristic: data should be object/dict with 1+ keys

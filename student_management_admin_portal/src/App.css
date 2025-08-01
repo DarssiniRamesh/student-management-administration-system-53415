@@ -1,23 +1,27 @@
 /* CSS Variables for Theme Management */
 :root {
-  /* Light theme colors */
+  --brand-primary: #1976d2;
+  --brand-accent: #ff9800;
+  --brand-dark: #424242;
   --bg-primary: #ffffff;
   --bg-secondary: #f8f9fa;
   --text-primary: #282c34;
-  --text-secondary: #61dafb;
+  --text-secondary: #424242;
   --border-color: #e9ecef;
-  --button-bg: #007bff;
+  --button-bg: #1976d2;
   --button-text: #ffffff;
 }
 
 [data-theme="dark"] {
-  /* Dark theme colors */
+  --brand-primary: #1976d2;
+  --brand-accent: #ff9800;
+  --brand-dark: #424242;
   --bg-primary: #1a1a1a;
   --bg-secondary: #282c34;
   --text-primary: #ffffff;
-  --text-secondary: #61dafb;
+  --text-secondary: #BBBBBB;
   --border-color: #404040;
-  --button-bg: #0056b3;
+  --button-bg: #1976d2;
   --button-text: #ffffff;
 }
 
@@ -38,7 +42,7 @@
 /* Sidebar styling */
 .sidebar {
   width: 220px;
-  background-color: #1976d2; /* theme primary */
+  background-color: var(--brand-primary);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -83,10 +87,10 @@
 }
 
 .sidebar-link.active {
-  background: #ff9800; /* theme accent */
+  background: var(--brand-accent);
   color: #fff;
   opacity: 1;
-  border-left: 4px solid #424242; /* theme secondary */
+  border-left: 4px solid var(--brand-dark);
 }
 
 .dashboard-main {
@@ -101,7 +105,7 @@
 .dashboard-main h2 {
   font-size: 2.2rem;
   margin-bottom: 8px;
-  color: #1976d2;
+  color: var(--brand-primary);
 }
 
 .dashboard-main p {
@@ -188,8 +192,8 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: var(--button-bg);
-  color: var(--button-text);
+  background-color: var(--brand-accent);
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   padding: 10px 20px;
@@ -197,15 +201,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.05);
 }
-
 .theme-toggle:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  opacity: 0.9;
+  box-shadow: 0 4px 8px rgba(25, 118, 210, 0.10);
+  opacity: 0.95;
 }
-
 .theme-toggle:active {
   transform: translateY(0);
 }
