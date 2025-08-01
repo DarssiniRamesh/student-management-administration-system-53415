@@ -29,6 +29,132 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Sidebar & Layout Styles */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar styling */
+.sidebar {
+  width: 220px;
+  background-color: #1976d2; /* theme primary */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-shadow: 2px 0 8px 0 rgba(25, 118, 210, 0.05);
+  min-height: 100vh;
+}
+
+.sidebar-header {
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: .05em;
+  padding: 28px 20px 12px 24px;
+}
+
+.sidebar-title {
+  color: #fff;
+}
+
+.sidebar-nav {
+  list-style: none;
+  margin: 0; padding: 0;
+  flex: 1;
+}
+
+.sidebar-link {
+  padding: 14px 32px;
+  color: #fff;
+  opacity: 0.85;
+  font-size: 1rem;
+  font-weight: 500;
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: background 0.14s, border 0.2s, opacity 0.2s;
+  outline: none;
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus {
+  background: #1564b3;
+  opacity: 1;
+}
+
+.sidebar-link.active {
+  background: #ff9800; /* theme accent */
+  color: #fff;
+  opacity: 1;
+  border-left: 4px solid #424242; /* theme secondary */
+}
+
+.dashboard-main {
+  flex: 1;
+  background: var(--bg-primary);
+  padding: 48px 36px 24px 36px;
+  transition: background 0.2s;
+  min-height: 100vh;
+  text-align: left;
+}
+
+.dashboard-main h2 {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  color: #1976d2;
+}
+
+.dashboard-main p {
+  opacity: 0.85;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 900px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    flex-direction: row;
+    width: 100vw;
+    min-width: 0;
+    height: 60px;
+    min-height: 0;
+    box-shadow: 0 2px 4px 0 rgba(25, 118, 210, 0.04);
+  }
+  .sidebar-header {
+    display: none;
+  }
+  .sidebar-nav {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 60px;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .sidebar-link, .sidebar-link.active {
+    flex: 1;
+    font-size: 1rem;
+    padding: 0 0;
+    height: 60px;
+    max-width: 100vw;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0 !important;
+    text-align: center;
+    line-height: 60px;
+    background: none;
+  }
+  .sidebar-link.active {
+    border-bottom: 4px solid #ff9800;
+    background: none;
+    color: #1976d2 !important;
+  }
+  .dashboard-main {
+    padding: 20px 3vw;
+  }
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

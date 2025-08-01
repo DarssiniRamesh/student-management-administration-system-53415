@@ -1,47 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect, useCallback } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import './App.css';
+import Layout from './components/Layout';
 
-// PUBLIC_INTERFACE
+// Placeholder page components for the initial scaffold
+function OperatorsPage() {
+  return (
+    <section>
+      <h2>Operators</h2>
+      <p>Placeholder for managing operators.</p>
+    </section>
+  );
+}
+function SystemParamsPage() {
+  return (
+    <section>
+      <h2>System Parameters</h2>
+      <p>Placeholder for backend configuration parameters.</p>
+    </section>
+  );
+}
+function StatusPage() {
+  return (
+    <section>
+      <h2>Status</h2>
+      <p>Placeholder for status dashboard.</p>
+    </section>
+  );
+}
+
+/**
+ * PUBLIC_INTERFACE
+ * Main application - handles theme and routing
+ */
 function App() {
   const [theme, setTheme] = useState('light');
 
-  // Effect to apply theme to document element
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
   // PUBLIC_INTERFACE
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  return (
-    <div className="App">
-      <header className="App-header">
+  // React Router context-aware handler
+  function AppWithRouter() {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Sidebar navigation callback
+    const handleNavigate = useCallback(
+      (path) => { if (path !== location.pathname) navigate(path); },
+      [navigate, location.pathname]
+    );
+
+    return (
+      <Layout activePath={location.pathname} onNavigate={handleNavigate}>
         <button 
-          className="theme-toggle" 
+          className="theme-toggle"
           onClick={toggleTheme}
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
         >
           {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
         </button>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          Current theme: <strong>{theme}</strong>
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <Routes>
+          <Route path="/operators" element={<OperatorsPage />} />
+          <Route path="/system-params" element={<SystemParamsPage />} />
+          <Route path="/status" element={<StatusPage />} />
+          <Route path="*" element={<OperatorsPage />} /> {/* Default route */}
+        </Routes>
+      </Layout>
+    );
+  }
+
+  return (
+    <div className="App">
+      <Router>
+        <AppWithRouter />
+      </Router>
     </div>
   );
 }
