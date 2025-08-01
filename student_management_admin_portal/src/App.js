@@ -7,15 +7,7 @@ import { login, logout, getToken, getUser, isAuthenticated } from './components/
 
 import OperatorsPage from "./components/OperatorsPage";
 import SystemParamsPage from "./components/SystemParamsPage";
-// Placeholder page components for the initial scaffold
-function StatusPage() {
-  return (
-    <section>
-      <h2>Status</h2>
-      <p>Placeholder for status dashboard.</p>
-    </section>
-  );
-}
+import SystemStatusPage from "./components/SystemStatusPage";
 
 // PUBLIC_INTERFACE
 // Simple protected-route wrapper for dashboard section
@@ -145,7 +137,7 @@ function App() {
                 <Routes>
                   <Route path="/operators" element={<OperatorsPage />} />
                   <Route path="/system-params" element={<SystemParamsPage />} />
-                  <Route path="/status" element={<StatusPage />} />
+                  <Route path="/status" element={<SystemStatusPage />} />
                   <Route path="*" element={<OperatorsPage />} /> {/* Default route */}
                 </Routes>
               </Layout>
