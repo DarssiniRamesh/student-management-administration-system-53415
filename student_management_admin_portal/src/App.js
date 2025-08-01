@@ -5,15 +5,8 @@ import Layout from './components/Layout';
 import Login from './components/Login';
 import { login, logout, getToken, getUser, isAuthenticated } from './components/auth';
 
+import OperatorsPage from "./components/OperatorsPage";
 // Placeholder page components for the initial scaffold
-function OperatorsPage() {
-  return (
-    <section>
-      <h2>Operators</h2>
-      <p>Placeholder for managing operators.</p>
-    </section>
-  );
-}
 function SystemParamsPage() {
   return (
     <section>
