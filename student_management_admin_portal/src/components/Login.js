@@ -30,12 +30,35 @@ function Login({ onLogin, error }) {
           body: `username=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
         }
       );
-      const data = await resp.json();
-      if (resp.ok && data.access_token) {
+
+      let data = null;
+      let errorMsg = "";
+      try {
+        data = await resp.json();
+      } catch (jsonErr) {
+        // JSON parse failed (possibly a 500/error page/non-JSON response)
+        if (resp.status >= 500) {
+          errorMsg = "Internal server error. Please try again later or contact support.";
+        } else {
+          errorMsg = "Unexpected server response. Please try again.";
+        }
+      }
+
+      if (resp.ok && data && data.access_token) {
         // save token + user to caller (App)
         onLogin(data.access_token, data.user || {});
       } else {
-        throw new Error(data.detail || "Login failed");
+        if (!errorMsg) {
+          // If JSON parsed, try to extract error info, else fallback
+          errorMsg =
+            (data && (data.detail || data.message)) ||
+            (resp.status === 500
+              ? "Internal server error. Please try again later or contact support."
+              : resp.status === 0
+              ? "Network error or server unavailable."
+              : "Invalid credentials or login failed.");
+        }
+        throw new Error(errorMsg);
       }
     } catch (err) {
       onLogin(null, null, err.message || "Login failed");
