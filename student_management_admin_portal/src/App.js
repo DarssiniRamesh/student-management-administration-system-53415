@@ -6,15 +6,8 @@ import Login from './components/Login';
 import { login, logout, getToken, getUser, isAuthenticated } from './components/auth';
 
 import OperatorsPage from "./components/OperatorsPage";
+import SystemParamsPage from "./components/SystemParamsPage";
 // Placeholder page components for the initial scaffold
-function SystemParamsPage() {
-  return (
-    <section>
-      <h2>System Parameters</h2>
-      <p>Placeholder for backend configuration parameters.</p>
-    </section>
-  );
-}
 function StatusPage() {
   return (
     <section>
